@@ -41,6 +41,14 @@ router.patch('/:id', async (req, res) => {
       return res.status(404).json({ message: 'Project not found' });
     }
 
+    // If updating taskStatus, merge with existing taskStatus
+    if (req.body.taskStatus) {
+      req.body.taskStatus = {
+        ...project.taskStatus.toObject(),
+        ...req.body.taskStatus
+      };
+    }
+
     const updatedProject = await Project.findByIdAndUpdate(id, req.body, { new: true });
     res.json(updatedProject);
   } catch (error) {
