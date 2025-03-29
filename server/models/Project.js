@@ -6,23 +6,36 @@ const projectSchema = new mongoose.Schema({
     required: true
   },
   tasks: {
+    layout:Boolean,
     mddaMap: Boolean,
-    architectureDesign: Boolean,
-    construction: Boolean,
+    architectureDwg: Boolean,
+    structureDwg: Boolean,
+    ext3D: Boolean,
     other: String
   },
   taskStatus: {
+    layout: {
+      type: String,
+      enum: ['pending', 'in-progress', 'completed'],
+      default: 'pending'
+    },
+    
     mddaMap: {
       type: String,
       enum: ['pending', 'in-progress', 'completed'],
       default: 'pending'
     },
-    architectureDesign: {
+    architectureDwg: {
       type: String,
       enum: ['pending', 'in-progress', 'completed'],
       default: 'pending'
     },
-    construction: {
+    structureDwg: {
+      type: String,
+      enum: ['pending', 'in-progress', 'completed'],
+      default: 'pending'
+    },
+    ext3D: {
       type: String,
       enum: ['pending', 'in-progress', 'completed'],
       default: 'pending'
