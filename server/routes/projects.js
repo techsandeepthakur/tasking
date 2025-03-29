@@ -47,6 +47,35 @@ router.patch('/:id', async (req, res) => {
         ...project.taskStatus.toObject(),
         ...req.body.taskStatus
       };
+      
+      // Calculate overall status based on active tasks and their completion status
+      const activeTasks = [];
+      const tasks = project.tasks.toObject();
+      
+      // Check which tasks are active (true)
+      if (tasks.mddaMap === true) activeTasks.push('mddaMap');
+      if (tasks.architectureDesign === true) activeTasks.push('architectureDesign');
+      if (tasks.construction === true) activeTasks.push('construction');
+      
+      // If there are active tasks, determine overall status
+      if (activeTasks.length > 0) {
+        const updatedTaskStatus = req.body.taskStatus;
+        
+        // Check if all active tasks are completed
+        const allCompleted = activeTasks.every(task => updatedTaskStatus[task] === 'completed');
+        
+        // Check if any active task is still pending (not started)
+        const anyPending = activeTasks.some(task => updatedTaskStatus[task] === 'pending');
+        
+        // Set overall status
+        if (allCompleted) {
+          req.body.status = 'completed';
+        } else if (!anyPending) {
+          req.body.status = 'in-progress';
+        } else {
+          req.body.status = 'pending';
+        }
+      }
     }
 
     const updatedProject = await Project.findByIdAndUpdate(id, req.body, { new: true });
